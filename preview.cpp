@@ -77,7 +77,8 @@ int next_prev_animation_check () {
 	}
 }
 
-void move_animation_play (bool lr) {
+void move_animation_play (GtkWidget *w) {
+	const bool lr = gtk_button_get_label(GTK_BUTTON(w)) == "p";
 /*
 	LR 
 	Flase = right
@@ -112,14 +113,6 @@ void move_animation_play (bool lr) {
 	g_timeout_add(0, update, &current_sprite_animation);
 }
 
-void left_move_animation_play () {
-	move_animation_play(true);
-}
-
-void rigth_move_animation_play () {
-	move_animation_play(false);
-}
-
 int main (int argc, char **argv) {
 	gtk_init(&argc, &argv);
 	animation_window = gtk_builder_new();
@@ -151,12 +144,13 @@ int main (int argc, char **argv) {
 		prev_tic += (sprites[i].at(5) - '0') * 35;
 	}
 	g_signal_connect(GTK_WIDGET(gtk_builder_get_object(animation_window, "n")), "clicked", G_CALLBACK(
-		rigth_move_animation_play
+		move_animation_play
 	), NULL);
 	g_signal_connect(GTK_WIDGET(gtk_builder_get_object(animation_window, "p")), "clicked", G_CALLBACK(
-		left_move_animation_play
+		move_animation_play
 	), NULL);
 	g_timeout_add(prev_tic, stop_animation_prev, animation_window);
+	g_signal_connect(window, "delete-event", G_CALLBACK(g_object_unref), animation_window);
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);
 	g_signal_connect(GTK_WIDGET(gtk_builder_get_object(animation_window, "s")), "clicked", G_CALLBACK(play_animation_prev), &sprites);
 	gtk_widget_show_all(window);

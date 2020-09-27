@@ -27,21 +27,22 @@ void on_gzm_settings_clicked (GtkWidget *w) { // opens the settings window
 
 int main (int argc, char **argv) {
 	gtk_init(&argc, &argv);
-	GtkBuilder *builder;
+	GtkBuilder *builder = gtk_builder_new();
  	GtkWidget *window;
-	builder = gtk_builder_new();
+ 	GtkButton *new_mod_button, *load_mod_button;
 	gtk_builder_add_from_file(builder, "./glade/main_window.glade", NULL);
-
 	window = GTK_WIDGET(gtk_builder_get_object(builder, "GZM_window"));
-
-	gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(builder, "new_mod")), (get_word_by_lang("new_mod")).c_str());
-	gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(builder, "load_mod")), (get_word_by_lang("load_mod")).c_str());
+	new_mod_button = GTK_BUTTON(gtk_builder_get_object(builder, "new_mod"));
+	load_mod_button = GTK_BUTTON(gtk_builder_get_object(builder, "load_mod"));
+	gtk_button_set_label(new_mod_button, (get_word_by_lang("new_mod")).c_str());
+	gtk_button_set_label(load_mod_button, (get_word_by_lang("load_mod")).c_str());
 	gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(builder, "gzm_settings")), (get_word_by_lang("config")).c_str());
 	g_signal_connect(GTK_BUTTON(gtk_builder_get_object(builder, "gzm_settings")), "clicked", G_CALLBACK(on_gzm_settings_clicked), NULL);
-	g_signal_connect(GTK_BUTTON(gtk_builder_get_object(builder, "new_mod")), "clicked", G_CALLBACK(on_new_mod_clicked), NULL);//open the 'create window' editor
-	g_signal_connect(GTK_BUTTON(gtk_builder_get_object(builder, "load_mod")), "clicked", G_CALLBACK(on_load_mod_clicked), window);//runs the file browser for select a WAD or PK3/ZIP file
+	g_signal_connect(new_mod_button, "clicked", G_CALLBACK(on_new_mod_clicked), NULL);//open the 'create window' editor
+	g_signal_connect(load_mod_button, "clicked", G_CALLBACK(on_load_mod_clicked), window);//runs the file browser for select a WAD or PK3/ZIP file
 	g_signal_connect(window, "delete-event", G_CALLBACK(gtk_main_quit), NULL);//line 10
 	gtk_widget_show_all(window);
+	g_object_unref(builder);
 	gtk_main();
 	return 0;
 }
